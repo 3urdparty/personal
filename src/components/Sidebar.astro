@@ -3,24 +3,30 @@ import Logo from "@/assets/logo.svg"
 import ThemeToggle from "@/components/ThemeToggle.astro"
 import { NAVIGATION, SITE } from "@/consts"
 import { normalizePath } from "@/lib/utils"
+import { withBase } from "@/utils/path"
 
 type Props = { crumbs?: { label: string; href: string }[] }
 
 const { crumbs = [] } = Astro.props
 const pathname = normalizePath(Astro.url.pathname) || "/"
-const section = NAVIGATION.find(
+const homeHref = withBase("/")
+const navigation = NAVIGATION.map((item) => ({
+  ...item,
+  href: withBase(item.href),
+}))
+const section = navigation.find(
   ({ href }) => pathname === href || pathname.startsWith(`${href}/`),
 )
 ---
 
 <aside data-bar>
   <sidebar-inner>
-    <a href="/" aria-label={SITE.title}>
+    <a href={homeHref} aria-label={SITE.title}>
       <Logo />
     </a>
     <nav>
       <ul>
-        {NAVIGATION.map((item) => (
+        {navigation.map((item) => (
             <li>
               <a
                 href={item.href}
@@ -33,7 +39,7 @@ const section = NAVIGATION.find(
                   {crumbs.map((crumb, i) => (
                     <li data-depth={i ? 1 : undefined}>
                       <a
-                        href={crumb.href}
+                        href={withBase(crumb.href)}
                         aria-current={
                           i === crumbs.length - 1 ? "page" : undefined
                         }
@@ -50,7 +56,7 @@ const section = NAVIGATION.find(
             crumbs.map((crumb, i) => (
               <li data-depth={i ? 1 : undefined}>
                 <a
-                  href={crumb.href}
+                  href={withBase(crumb.href)}
                   aria-current={i === crumbs.length - 1 ? "page" : undefined}
                 >
                   {crumb.label}

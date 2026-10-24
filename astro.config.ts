@@ -18,7 +18,7 @@ import { remarkReadingTime } from "./src/plugins/remark-reading-time"
 const BASE_PATH = process.env.BASE_PATH || "/"
 
 export default defineConfig({
-  site: "https://astro-erudite.vercel.app",
+  site: "https://3urdparty.github.io",
   base: BASE_PATH,
   compressHTML: true,
   prefetch: { prefetchAll: true },

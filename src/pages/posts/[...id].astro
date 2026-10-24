@@ -10,6 +10,7 @@ import { getPostHref, getPostPath } from "@/data/post"
 import Layout from "@/layouts/Layout.astro"
 import { getPosts, getSubposts, pageTitle } from "@/lib/content"
 import { formatDate, subpostSlug } from "@/lib/utils"
+import { withBase } from "@/utils/path"
 import { Image } from "astro:assets"
 import { getEntries, render, type CollectionEntry } from "astro:content"
 
@@ -103,7 +104,12 @@ if (post.id !== parent.id) {
                 </author-avatars>
                 <author-names>
                   {authors.map((author, j) => (
-                    <>{j > 0 && ", "}<a href={`/authors/${author.id}`}>{author.data.name}</a></>
+                    <>
+                      {j > 0 && ", "}
+                      <a href={withBase(`/authors/${author.id}`)}>
+                        {author.data.name}
+                      </a>
+                    </>
                   ))}
                 </author-names>
               </post-authors>
@@ -119,7 +125,7 @@ if (post.id !== parent.id) {
             {entry.data.tags.length > 0 && (
               <post-tags>
                 {entry.data.tags.map((tag) => (
-                  <a href={`/tags/${tag}`}>#{tag}</a>
+                  <a href={withBase(`/tags/${tag}`)}>#{tag}</a>
                 ))}
               </post-tags>
             )}

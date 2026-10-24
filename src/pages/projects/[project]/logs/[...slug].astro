@@ -12,6 +12,7 @@ import {
 import { getProjectBySlug, getProjectPath } from "@/data/project"
 import Layout from "@/layouts/Layout.astro"
 import { formatDate } from "@/lib/utils"
+import { withBase } from "@/utils/path"
 import { Image } from "astro:assets"
 import { getEntries, render, type CollectionEntry } from "astro:content"
 
@@ -68,7 +69,7 @@ const projectHref = project ? getProjectPath(project) : `/projects/${projectSlug
           {formatDate(post.data.publishDate)}
         </time>
         {minutesRead && <span>{minutesRead}</span>}
-        {tags.map((tag) => <a href={`/tags/${tag}`}>#{tag}</a>)}
+        {tags.map((tag) => <a href={withBase(`/tags/${tag}`)}>#{tag}</a>)}
       </post-meta>
       <p>{post.data.description}</p>
     </header>

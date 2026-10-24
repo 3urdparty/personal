@@ -2,6 +2,7 @@
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 import { ABOUT, DICTIONARY_ENTRY } from "@/site.config"
+import { withBase } from "@/utils/path"
 ---
 
 <Layout>
@@ -37,7 +38,9 @@ import { ABOUT, DICTIONARY_ENTRY } from "@/site.config"
             ))}
         </dl>
         <nav aria-label="About links">
-          {ABOUT.links.map((link) => <a href={link.href}>{link.label} →</a>)}
+          {ABOUT.links.map((link) => (
+              <a href={withBase(link.href)}>{link.label} →</a>
+            ))}
         </nav>
       </about-copy>
     </about-section>
