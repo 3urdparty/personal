@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-labelledby="title desc">
+  <title id="title">Research plot</title>
+  <desc id="desc">A warm plotted curve rising over a subtle square grid.</desc>
+  <rect width="640" height="480" fill="#151210"/>
+  <g stroke="#3b332c" stroke-width="2">
+    <path d="M80 80v320M160 80v320M240 80v320M320 80v320M400 80v320M480 80v320M560 80v320"/>
+    <path d="M80 80h480M80 160h480M80 240h480M80 320h480M80 400h480"/>
+  </g>
+  <path d="M82 356c74-18 114-84 166-74 58 12 58 75 116 48 58-28 73-145 194-180" fill="none" stroke="#c89761" stroke-linecap="round" stroke-width="12"/>
+  <path d="M82 400h478M82 400V80" fill="none" stroke="#f4f0e3" stroke-linecap="round" stroke-width="5" opacity=".65"/>
+  <g fill="#171311" stroke="#f4f0e3" stroke-width="5">
+    <circle cx="180" cy="306" r="13"/>
+    <circle cx="300" cy="314" r="13"/>
+    <circle cx="416" cy="274" r="13"/>
+    <circle cx="520" cy="164" r="13"/>
+  </g>
+</svg>

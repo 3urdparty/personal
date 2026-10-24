@@ -1,0 +1,173 @@
+---
+import MetaPage from "@/components/MetaPage.astro"
+import Layout from "@/layouts/Layout.astro"
+
+const profiles = [
+  {
+    label: "Google Scholar",
+    href: "https://scholar.google.com/scholar?q=%22Mustafa%20Yousif%20Elagib%22",
+  },
+  {
+    label: "ORCID",
+    href: "https://orcid.org/orcid-search/search?searchQuery=Mustafa%20Yousif%20Elagib",
+  },
+]
+
+const researchAreas = [
+  {
+    title: "Autonomous aerial robotics",
+    description:
+      "Navigation, obstacle avoidance, route planning, and perception for drones operating in GPS-limited plantation environments.",
+  },
+  {
+    title: "SLAM and robotic locomotion",
+    description:
+      "Resource-aware mapping, sensor fusion, gait planning, and inverse kinematics for legged robotic platforms.",
+  },
+  {
+    title: "Embedded motor control",
+    description:
+      "Custom electronics, encoder feedback, and field-oriented control for compact BLDC actuators and robotic joints.",
+  },
+]
+---
+
+<Layout crumbs={[{ label: "Publications", href: "/publications" }]}>
+  <MetaPage
+    slot="head"
+    title="Publications"
+    description="Research publications and current engineering research areas by Mustafa Yousif."
+  />
+
+  <article class="publications">
+    <header class="intro">
+      <p class="eyebrow">Research</p>
+      <h1>Publications</h1>
+      <p>
+        Peer-reviewed papers, preprints, and technical research outputs will be
+        collected here. Publication records can also be found through the
+        profiles below.
+      </p>
+      <nav aria-label="Publication profiles">
+        {profiles.map((profile) => (
+          <a href={profile.href} target="_blank" rel="noopener noreferrer">
+            {profile.label} <span aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </nav>
+    </header>
+
+    <section aria-labelledby="research-heading">
+      <header class="section-heading">
+        <p>Current work</p>
+        <h2 id="research-heading">Research areas</h2>
+      </header>
+      <div class="research-grid">
+        {researchAreas.map((area) => (
+          <article>
+            <h3>{area.title}</h3>
+            <p>{area.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  </article>
+</Layout>
+
+<style>
+  .publications {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl-2xl);
+  }
+
+  .intro {
+    padding-block-end: var(--space-l);
+    border-block-end: 2px solid var(--border);
+  }
+
+  .eyebrow,
+  .section-heading > p {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin-block-start: var(--space-2xs);
+    color: var(--foreground);
+    font-size: var(--step-4);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .intro > p:last-of-type {
+    max-inline-size: 58ch;
+    margin-block-start: var(--space-m);
+    color: var(--muted-foreground);
+  }
+
+  .intro nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-s);
+    margin-block-start: var(--space-m);
+  }
+
+  .intro nav a {
+    color: var(--foreground);
+    text-underline-offset: 0.2em;
+  }
+
+  .section-heading {
+    display: grid;
+    grid-template-columns: minmax(7rem, 0.5fr) minmax(0, 1.5fr);
+    gap: var(--space-m);
+    align-items: baseline;
+    margin-block-end: var(--space-m);
+  }
+
+  .section-heading h2 {
+    color: var(--foreground);
+    font-size: var(--step-2);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .research-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-m);
+  }
+
+  .research-grid article {
+    padding-block-start: var(--space-m);
+    border-block-start: 1px solid var(--border);
+  }
+
+  .research-grid h3 {
+    color: var(--foreground);
+    font-size: var(--step-1);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.25;
+  }
+
+  .research-grid p {
+    margin-block-start: var(--space-xs);
+    color: var(--muted-foreground);
+  }
+
+  @media (width < 48rem) {
+    .research-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (width < 32rem) {
+    .section-heading {
+      grid-template-columns: 1fr;
+      gap: var(--space-2xs);
+    }
+  }
+</style>

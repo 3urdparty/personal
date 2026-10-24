@@ -1,5 +1,6 @@
 import { SITE } from "@/consts"
 import { getPosts } from "@/lib/content"
+import { getPostPath } from "@/data/post"
 import rss from "@astrojs/rss"
 import type { APIContext } from "astro"
 
@@ -12,8 +13,8 @@ export async function GET(context: APIContext) {
     items: posts.map((post) => ({
       title: post.data.title,
       description: post.data.description,
-      pubDate: post.data.date,
-      link: `/blog/${post.id}`,
+      pubDate: post.data.publishDate,
+      link: getPostPath(post),
     })),
   })
 }

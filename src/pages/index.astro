@@ -1,54 +1,46 @@
 ---
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
+import { ABOUT, DICTIONARY_ENTRY } from "@/site.config"
 ---
 
 <Layout>
   <MetaPage slot="head" />
   <dictionary-entry>
-    <h1>er·u·dite</h1>
+    <h1>{DICTIONARY_ENTRY.word}</h1>
     <etymology-span>
-      <ipa-span>/ˈer(y)əˌdīt/</ipa-span>
-      adj. [L. <i>ēruditus</i>, instructed, pp. of <i>ērudīre</i> to instruct,
-      polish, lit. to free from roughness, f. ē- out + <i>rudis</i> rough,
-      untrained]
+      <ipa-span>{DICTIONARY_ENTRY.pronunciation}</ipa-span>
+      <span>{DICTIONARY_ENTRY.partOfSpeech}</span>
+      <span class="origin">[{DICTIONARY_ENTRY.origin}]</span>
     </etymology-span>
     <ol>
-      <li>
-        having or showing deep, wide-ranging knowledge acquired through study;
-        learned (<i>an erudite scholar</i>).
-      </li>
-      <li>
-        (of writing, speech, or argument) reflecting such knowledge; scholarly (<i
-          >an erudite footnote</i
-        >).
-      </li>
+      {DICTIONARY_ENTRY.definitions.map((definition) => (
+          <li>
+            {definition.text} (<i>{definition.example}</i>).
+          </li>
+        ))}
     </ol>
     <hr>
-    <prose-content>
-      <p>
-        astro-erudite is
-        <a href="https://enscribe.dev" target="_blank" rel="noopener noreferrer"
-          >enscribe</a
-        >'s opinionated, unstyled static blogging template built with
-        <a href="https://astro.build" target="_blank" rel="noopener noreferrer"
-          >Astro</a
-        >
-        and native CSS. astro-erudite uses no UI or CSS framework and contains
-        minimal dependencies.
-      </p>
-      <p>
-        To use this template, check out the
-        <a
-          href="https://github.com/jktrn/astro-erudite"
-          target="_blank"
-          rel="noopener noreferrer"
-          >GitHub</a
-        >
-        repository. To learn more about why this template exists, read this blog
-        post: <a href="/blog/introducing-v2">Introducing astro-erudite v2</a>.
-      </p>
-    </prose-content>
+    <about-section id="about">
+      <header>
+        <p>{ABOUT.label}</p>
+        <h2>{ABOUT.heading}</h2>
+      </header>
+      <about-copy>
+        {ABOUT.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+        <dl>
+          {ABOUT.details.map((detail) => (
+              <div>
+                <dt>{detail.label}</dt>
+                <dd>{detail.value}</dd>
+              </div>
+            ))}
+        </dl>
+        <nav aria-label="About links">
+          {ABOUT.links.map((link) => <a href={link.href}>{link.label} →</a>)}
+        </nav>
+      </about-copy>
+    </about-section>
   </dictionary-entry>
 </Layout>
 
@@ -64,6 +56,16 @@ import Layout from "@/layouts/Layout.astro"
 
     ipa-span {
       opacity: 0.6;
+    }
+
+    etymology-span {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 0.55em;
+
+      .origin {
+        flex-basis: 100%;
+      }
     }
 
     h1 {
@@ -97,12 +99,82 @@ import Layout from "@/layouts/Layout.astro"
     }
 
     hr {
-      margin-block: var(--space-m);
+      margin-block: var(--space-l-xl);
       border-block-start: 2px solid var(--border);
     }
 
-    prose-content {
-      margin-block-start: var(--space-xs);
+    about-section {
+      display: grid;
+      grid-template-columns: minmax(8rem, 0.7fr) minmax(0, 2fr);
+      gap: var(--space-l);
+      scroll-margin-block-start: calc(
+        var(--bar-nav-height, 0px) +
+        var(--space-m)
+      );
+
+      header > p {
+        font-family: var(--font-mono);
+        font-size: var(--step--1);
+        color: var(--muted-foreground);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      h2 {
+        max-inline-size: 18ch;
+        margin-block-start: var(--space-3xs);
+        color: var(--foreground);
+        font-size: var(--step-1);
+        font-weight: var(--font-weight-medium);
+        line-height: 1.2;
+      }
+
+      about-copy {
+        display: block;
+
+        > p + p {
+          margin-block-start: var(--space-xs);
+        }
+      }
+
+      dl {
+        margin-block-start: var(--space-m);
+        border-block: 1px solid var(--border);
+
+        div {
+          display: grid;
+          grid-template-columns: minmax(5rem, 0.55fr) minmax(0, 1.45fr);
+          gap: var(--space-s);
+          padding-block: var(--space-2xs);
+
+          + div {
+            border-block-start: 1px solid var(--border);
+          }
+        }
+
+        dt {
+          font-family: var(--font-mono);
+          font-size: var(--step--1);
+          color: var(--muted-foreground);
+        }
+
+        dd {
+          margin: 0;
+          color: var(--foreground);
+        }
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-xs) var(--space-s);
+        margin-block-start: var(--space-m);
+      }
+
+      @media (width < 40rem) {
+        grid-template-columns: 1fr;
+        gap: var(--space-s);
+      }
     }
   }
 </style>

@@ -2,17 +2,16 @@
 import ArrowLeft from "@/assets/icons/arrow-left.svg"
 import ArrowRight from "@/assets/icons/arrow-right.svg"
 import ScrollToTop from "@/components/ScrollToTop.astro"
-import type { CollectionEntry } from "astro:content"
+import { getPostHref, type PostEntry } from "@/data/post"
 
-type Post = CollectionEntry<"blog">
-type Props = { prev?: Post; next?: Post }
+type Props = { prev?: PostEntry; next?: PostEntry }
 
 const { prev, next } = Astro.props
 ---
 
 <post-actions>
   <a
-    href={prev && `/blog/${prev.id}`}
+    href={prev && getPostHref(prev)}
     data-icon-button
     data-dir="prev"
     aria-label={prev && `Previous post: ${prev.data.title}`}
@@ -22,7 +21,7 @@ const { prev, next } = Astro.props
     <ArrowLeft />
   </a>
   <a
-    href={next && `/blog/${next.id}`}
+    href={next && getPostHref(next)}
     data-icon-button
     data-dir="next"
     aria-label={next && `Next post: ${next.data.title}`}

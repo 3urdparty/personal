@@ -1,11 +1,13 @@
 ---
 title: 'The State of Static Blogs in 2024'
 description: 'There should not be a single reason why you would need a command palette search bar to find a blog post on your own site.'
-date: 2024-07-25
+publishDate: 2024-07-25
 order: 1
 tags:
   - v1.0.0
-image: "./assets/the-state-of-static-blogs.png"
+coverImage:
+  alt: "The state of static blogs"
+  src: "./assets/the-state-of-static-blogs.png"
 authors: ['enscribe']
 ---
 

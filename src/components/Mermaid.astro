@@ -1,0 +1,39 @@
+<script>
+  const diagrams = document.querySelectorAll("pre.mermaid")
+  if (diagrams.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return
+        observer.disconnect()
+        import("../scripts/mermaid").catch((error) =>
+          console.error("Could not load Mermaid", error),
+        )
+      },
+      { rootMargin: "200px" },
+    )
+    diagrams.forEach((diagram) => observer.observe(diagram))
+  }
+</script>
+
+<style is:global>
+  prose-content pre.mermaid {
+    margin-block: var(--space-m);
+    padding: var(--space-s);
+    overflow-x: auto;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    text-align: center;
+  }
+
+  prose-content pre.mermaid[data-rendered] {
+    white-space: normal;
+  }
+
+  prose-content pre.mermaid svg {
+    display: block;
+    max-inline-size: none;
+    block-size: auto;
+    margin-inline: auto;
+  }
+</style>

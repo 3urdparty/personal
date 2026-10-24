@@ -1,0 +1,119 @@
+---
+import Giscus from "@/components/Giscus.astro"
+import Mermaid from "@/components/Mermaid.astro"
+import MetaPost from "@/components/MetaPost.astro"
+import TableOfContents from "@/components/TableOfContents.astro"
+import {
+  getAllProjectLogs,
+  getPostTags,
+  getProjectLogSlug,
+  getProjectSlugFromLog,
+} from "@/data/post"
+import { getProjectBySlug, getProjectPath } from "@/data/project"
+import Layout from "@/layouts/Layout.astro"
+import { formatDate } from "@/lib/utils"
+import { Image } from "astro:assets"
+import { getEntries, render, type CollectionEntry } from "astro:content"
+
+export async function getStaticPaths() {
+  const logs = await getAllProjectLogs()
+  return logs.map((post) => ({
+    params: {
+      project: getProjectSlugFromLog(post),
+      slug: getProjectLogSlug(post),
+    },
+    props: { post },
+  }))
+}
+
+type Props = { post: CollectionEntry<"projectLog"> }
+
+const { post }: Props = Astro.props
+const projectSlug = getProjectSlugFromLog(post)
+const project = await getProjectBySlug(projectSlug)
+const { Content, headings, remarkPluginFrontmatter } = await render(post)
+const authors = await getEntries(post.data.authors)
+const tags = getPostTags(post)
+const hasMermaid = (remarkPluginFrontmatter as { hasMermaid?: boolean }).hasMermaid
+const minutesRead = (remarkPluginFrontmatter as { minutesRead?: string }).minutesRead
+const sections = [
+  {
+    label: post.data.title,
+    open: true,
+    headings: headings.filter(({ depth }) => depth >= 2 && depth <= 4),
+  },
+]
+const projectHref = project ? getProjectPath(project) : `/projects/${projectSlug}/`
+---
+
+<Layout
+  crumbs={[
+    { label: project?.data.title ?? projectSlug, href: projectHref },
+    { label: post.data.title, href: Astro.url.pathname },
+  ]}
+>
+  <MetaPost slot="head" post={post} />
+  {hasMermaid && <Mermaid slot="head" />}
+  {sections[0].headings.length > 0 && (
+    <TableOfContents slot="toc" title={post.data.title} sections={sections} />
+  )}
+  <article>
+    <header>
+      <h1>{post.data.title}</h1>
+      <post-meta>
+        {authors.length > 0 && (
+          <span>{authors.map((author) => author.data.name).join(", ")}</span>
+        )}
+        <time datetime={post.data.publishDate.toISOString()}>
+          {formatDate(post.data.publishDate)}
+        </time>
+        {minutesRead && <span>{minutesRead}</span>}
+        {tags.map((tag) => <a href={`/tags/${tag}`}>#{tag}</a>)}
+      </post-meta>
+      <p>{post.data.description}</p>
+    </header>
+    {post.data.coverImage && (
+      <Image
+        src={post.data.coverImage.src}
+        alt={post.data.coverImage.alt}
+        width={1200}
+        height={630}
+      />
+    )}
+    <prose-content><Content /></prose-content>
+  </article>
+  <Giscus />
+</Layout>
+
+<style>
+  header {
+    margin-block-end: var(--space-m);
+
+    h1 {
+      font-size: var(--step-3);
+      line-height: calc(var(--leading-offset) + 1em);
+      font-weight: var(--font-weight-medium);
+    }
+
+    > p {
+      margin-block-start: var(--space-2xs);
+      font-size: var(--step--1);
+      color: var(--muted-foreground);
+    }
+  }
+
+  post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-3xs);
+    font-size: var(--step--1);
+    color: var(--muted-foreground);
+  }
+
+  article > :global(img) {
+    inline-size: 100%;
+    block-size: auto;
+    margin-block-end: var(--space-m);
+  }
+</style>

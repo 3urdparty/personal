@@ -54,6 +54,7 @@ import SunIcon from "@/assets/icons/sun.svg"
     const theme = dark ? "light" : "dark"
     root.dataset.theme = theme
     localStorage.theme = theme
+    document.dispatchEvent(new CustomEvent("theme-change", { detail: { theme } }))
   }
 
   const button = document.getElementById("theme-toggle")

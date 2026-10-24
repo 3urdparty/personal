@@ -8,7 +8,7 @@ const posts = await getPosts()
 ---
 
 <Layout>
-  <MetaPage slot="head" title="Blog" />
+  <MetaPage slot="head" title="Posts" />
   <ul>
     {posts.map((post) => <BlogCard post={post} />)}
   </ul>

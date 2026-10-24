@@ -3,7 +3,7 @@ import BlogCard from "@/components/BlogCard.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 import { getTags } from "@/lib/content"
-import type { CollectionEntry } from "astro:content"
+import type { PostEntry } from "@/data/post"
 
 export async function getStaticPaths() {
   const tags = await getTags()
@@ -13,7 +13,7 @@ export async function getStaticPaths() {
   }))
 }
 
-type Props = { tag: string; posts: CollectionEntry<"blog">[] }
+type Props = { tag: string; posts: PostEntry[] }
 
 const { tag, posts } = Astro.props
 ---

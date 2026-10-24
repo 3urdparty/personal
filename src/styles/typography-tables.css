@@ -1,4 +1,10 @@
 prose-content {
+  .table-scroll {
+    max-inline-size: 100%;
+    margin-inline: auto;
+    overflow-x: auto;
+  }
+
   table {
     --table-border: color-mix(
       in oklab,
@@ -6,7 +12,7 @@ prose-content {
       transparent
     );
 
-    display: block;
+    display: table;
     max-inline-size: fit-content;
     margin-inline: auto;
     overflow-x: auto;

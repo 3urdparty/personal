@@ -1,11 +1,13 @@
 ---
 title: 'v1.5.0: “A Callout Component for Nerds”'
 description: 'A quick update introduces our first content-based component: the callout!'
-date: 2025-04-24
+publishDate: 2025-04-24
 order: 3
 tags:
   - v1.5.0
-image: "./assets/callouts-component.png"
+coverImage:
+  alt: "Callout component preview"
+  src: "./assets/callouts-component.png"
 authors:
   - enscribe
 ---

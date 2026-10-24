@@ -1,0 +1,121 @@
+---
+import BlogCard from "@/components/BlogCard.astro"
+import MetaPage from "@/components/MetaPage.astro"
+import TableOfContents from "@/components/TableOfContents.astro"
+import { getAllProjects, getProjectLogs, getProjectSlug } from "@/data/project"
+import Layout from "@/layouts/Layout.astro"
+import { Image } from "astro:assets"
+import { render, type CollectionEntry } from "astro:content"
+
+export async function getStaticPaths() {
+  const projects = await getAllProjects()
+  return projects.map((project) => ({
+    params: { slug: getProjectSlug(project) },
+    props: { project },
+  }))
+}
+
+type Props = { project: CollectionEntry<"project"> }
+
+const { project } = Astro.props
+const { Content, headings } = await render(project)
+const logs = await getProjectLogs(getProjectSlug(project))
+const { title, description, image, links, stack, status } = project.data
+const sections = [
+  {
+    label: title,
+    open: true,
+    headings: headings.filter(({ depth }) => depth >= 2 && depth <= 4),
+  },
+]
+---
+
+<Layout crumbs={[{ label: title, href: Astro.url.pathname }]}>
+  <MetaPage slot="head" title={title} description={description} />
+  {sections[0].headings.length > 0 && (
+    <TableOfContents slot="toc" title={title} sections={sections} />
+  )}
+  <article>
+    <header>
+      <h1>{title}</h1>
+      <p>{description}</p>
+      {(status || stack.length > 0) && (
+        <project-meta>
+          {status && <span>{status}</span>}
+          {stack.map((item) => <span>{item}</span>)}
+        </project-meta>
+      )}
+      {(links.website || links.repository) && (
+        <project-links>
+          {links.website && <a href={links.website}>Website</a>}
+          {links.repository && <a href={links.repository}>Repository</a>}
+        </project-links>
+      )}
+    </header>
+    {image && (
+      <Image src={image.src} alt={image.alt} width={1200} height={630} />
+    )}
+    <prose-content><Content /></prose-content>
+  </article>
+  {logs.length > 0 && (
+    <section class="logs">
+      <h2>Project logs</h2>
+      <ul>{logs.map((log) => <BlogCard post={log} />)}</ul>
+    </section>
+  )}
+</Layout>
+
+<style>
+  header {
+    margin-block-end: var(--space-m);
+
+    h1 {
+      font-size: var(--step-3);
+      line-height: calc(var(--leading-offset) + 1em);
+      font-weight: var(--font-weight-medium);
+    }
+
+    > p {
+      margin-block-start: var(--space-2xs);
+      color: var(--muted-foreground);
+    }
+  }
+
+  project-meta,
+  project-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-2xs);
+    font-size: var(--step--1);
+  }
+
+  project-meta span {
+    padding-inline: var(--space-2xs);
+    color: var(--muted-foreground);
+    background: var(--muted);
+    border-radius: var(--radius-full);
+  }
+
+  article > :global(img) {
+    inline-size: 100%;
+    block-size: auto;
+    margin-block-end: var(--space-m);
+  }
+
+  .logs {
+    margin-block-start: var(--space-xl);
+
+    h2 {
+      margin-block-end: var(--space-s);
+      font-size: var(--step-2);
+      font-weight: var(--font-weight-medium);
+    }
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-m);
+    }
+  }
+</style>

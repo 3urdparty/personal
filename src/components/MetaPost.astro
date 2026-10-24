@@ -1,23 +1,26 @@
 ---
-import { getEntries, type CollectionEntry } from "astro:content"
+import { getEntries } from "astro:content"
 import { SITE } from "@/consts"
+import type { PostEntry } from "@/data/post"
 import { pageTitle } from "@/lib/content"
 
 type Props = {
-  post: CollectionEntry<"blog">
+  post: PostEntry
   canonical?: string
 }
 
 const { post, canonical: canonicalPath } = Astro.props
-const { title, description, date, image } = post.data
+const { title, description, publishDate, coverImage, ogImage: configuredOgImage } = post.data
 
 const base = Astro.site ?? new URL(Astro.url.origin)
 const authors = await getEntries(post.data.authors)
 const authorNames = authors.map((author) => author.data.name)
 const url = new URL(Astro.url.pathname, base)
 const canonical = new URL(canonicalPath ?? Astro.url.pathname, base)
-const ogImage = image
-  ? new URL(image.src, base)
+const ogImage = configuredOgImage
+  ? new URL(configuredOgImage, base)
+  : coverImage
+  ? new URL(coverImage.src.src, base)
   : new URL(SITE.defaultPostImage, base)
 ---
 
@@ -43,5 +46,5 @@ const ogImage = image
     <meta name="twitter:creator" content={authorNames.join(", ")} />
   )}
 
-<meta property="article:published_time" content={date.toISOString()}>
+<meta property="article:published_time" content={publishDate.toISOString()}>
 {authorNames.map((name) => <meta property="article:author" content={name} />)}

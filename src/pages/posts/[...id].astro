@@ -4,9 +4,12 @@ import PostActions from "@/components/PostActions.astro"
 import ScrollToTop from "@/components/ScrollToTop.astro"
 import SeriesReader from "@/components/SeriesReader.astro"
 import TableOfContents from "@/components/TableOfContents.astro"
+import Giscus from "@/components/Giscus.astro"
+import Mermaid from "@/components/Mermaid.astro"
+import { getPostHref, getPostPath } from "@/data/post"
 import Layout from "@/layouts/Layout.astro"
 import { getPosts, getSubposts, pageTitle } from "@/lib/content"
-import { formatDate, isSubpost, subpostSlug } from "@/lib/utils"
+import { formatDate, subpostSlug } from "@/lib/utils"
 import { Image } from "astro:assets"
 import { getEntries, render, type CollectionEntry } from "astro:content"
 
@@ -16,20 +19,20 @@ export async function getStaticPaths() {
   return posts.flatMap((parent, i) => {
     const chain = [parent, ...(series.get(parent.id) ?? [])]
     return chain.map((post) => ({
-      params: { id: post.id },
+      params: { id: getPostPath(post).replace(/^\/posts\//, "").replace(/\/$/, "") },
       props: { post, chain, prev: posts[i + 1], next: posts[i - 1] },
     }))
   })
 }
 
 type Props = {
-  post: CollectionEntry<"blog">
-  chain: CollectionEntry<"blog">[]
-  prev?: CollectionEntry<"blog">
-  next?: CollectionEntry<"blog">
+  post: CollectionEntry<"post">
+  chain: CollectionEntry<"post">[]
+  prev?: CollectionEntry<"post">
+  next?: CollectionEntry<"post">
 }
 
-const { post, chain, prev, next } = Astro.props
+const { post, chain, prev, next }: Props = Astro.props
 const [parent] = chain
 const rendered = await Promise.all(
   chain.map(async (entry) => ({
@@ -49,10 +52,14 @@ const sections = rendered.map(({ entry, headings }, i) => ({
 }))
 const hasToc =
   sections.length > 1 || sections.some(({ headings }) => headings.length > 0)
+const hasMermaid = rendered.some(
+  ({ remarkPluginFrontmatter }) =>
+    (remarkPluginFrontmatter as { hasMermaid?: boolean }).hasMermaid,
+)
 
-const crumbs = [{ label: parent.data.title, href: `/blog/${parent.id}` }]
-if (isSubpost(post.id)) {
-  crumbs.push({ label: post.data.title, href: `/blog/${post.id}` })
+const crumbs = [{ label: parent.data.title, href: getPostHref(parent) }]
+if (post.id !== parent.id) {
+  crumbs.push({ label: post.data.title, href: getPostHref(post) })
 }
 ---
 
@@ -60,8 +67,9 @@ if (isSubpost(post.id)) {
   <MetaPost
     slot="head"
     post={post}
-    canonical={isSubpost(post.id) ? `/blog/${parent.id}` : undefined}
+    canonical={post.id !== parent.id ? getPostPath(parent) : undefined}
   />
+  {hasMermaid && <Mermaid slot="head" />}
   {hasToc && (
       <TableOfContents
         slot="toc"
@@ -71,10 +79,10 @@ if (isSubpost(post.id)) {
     )}
   <PostActions slot="actions" prev={prev} next={next} />
   <ScrollToTop floating />
-  {rendered.map(({ entry, Content, authors }, i) => (
+  {rendered.map(({ entry, Content, authors, remarkPluginFrontmatter }, i) => (
       <article
         id={i === 0 ? undefined : subpostSlug(entry.id)}
-        data-url={`/blog/${entry.id}`}
+        data-url={getPostHref(entry)}
         data-title={pageTitle(entry.data.title)}
         data-embedded={i > 0 || undefined}
       >
@@ -100,10 +108,15 @@ if (isSubpost(post.id)) {
                 </author-names>
               </post-authors>
             )}
-            <time datetime={entry.data.date.toISOString()}
-              >{formatDate(entry.data.date)}</time
+            <time datetime={entry.data.publishDate.toISOString()}
+              >{formatDate(entry.data.publishDate)}</time
             >
-            {entry.data.tags && (
+            {(remarkPluginFrontmatter as { minutesRead?: string }).minutesRead && (
+              <span class="reading-time">
+                {(remarkPluginFrontmatter as { minutesRead?: string }).minutesRead}
+              </span>
+            )}
+            {entry.data.tags.length > 0 && (
               <post-tags>
                 {entry.data.tags.map((tag) => (
                   <a href={`/tags/${tag}`}>#{tag}</a>
@@ -113,11 +126,11 @@ if (isSubpost(post.id)) {
           </post-meta>
           <p>{entry.data.description}</p>
         </header>
-        {entry.data.image && (
+        {entry.data.coverImage && (
           <post-banner>
             <Image
-              src={entry.data.image}
-              alt={entry.data.title}
+              src={entry.data.coverImage.src}
+              alt={entry.data.coverImage.alt}
               width={1200}
               height={630}
               priority={entry.id === post.id || undefined}
@@ -130,6 +143,7 @@ if (isSubpost(post.id)) {
       </article>
     ))}
   {chain.length > 1 && <SeriesReader />}
+  <Giscus />
 </Layout>
 
 <style>
@@ -207,6 +221,12 @@ if (isSubpost(post.id)) {
 
       time ~ post-tags::before {
         content: "·";
+      }
+
+      time ~ .reading-time::before,
+      .reading-time ~ post-tags::before {
+        content: "·";
+        margin-inline-end: var(--space-3xs);
       }
 
       a {

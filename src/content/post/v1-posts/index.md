@@ -1,8 +1,10 @@
 ---
 title: "v1 Posts"
 description: "An archive of every blog post that shipped with astro-erudite v1."
-date: 2025-05-21
-image: ./assets/banner.png
+publishDate: 2025-05-21
+coverImage:
+  alt: "v1 Posts"
+  src: ./assets/banner.png
 authors:
   - enscribe
 ---

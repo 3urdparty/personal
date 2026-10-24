@@ -34,8 +34,11 @@ async function highlightLanguage(
 ): Promise<ElementContent[]> {
   const block = new ExpressiveCodeBlock({ code, language: lang })
   const { renderedGroupAst } = await ec.render(block)
-  const tokens = select(".ec-line .code", renderedGroupAst)?.children
-  return tokens ?? [{ type: "text", value: code }]
+  const tree = renderedGroupAst as unknown as Parameters<typeof select>[1]
+  const tokens = select(".ec-line .code", tree)?.children
+  return (tokens as unknown as ElementContent[]) ?? [
+    { type: "text", value: code },
+  ]
 }
 
 function highlightScope(
@@ -74,7 +77,15 @@ export const inlineExpressiveCode = defineMdastPlugin({
       const dataLanguage =
         annotation.kind === "lang" ? annotation.lang : undefined
 
-      const value = toHtml(h("code", { dataEc: "", dataLanguage }, tokens))
+      const codeNode = {
+        type: "element",
+        tagName: "code",
+        properties: { dataEc: "", dataLanguage },
+        children: tokens,
+      } as const
+      const value = toHtml(
+        codeNode as unknown as Parameters<typeof toHtml>[0],
+      )
       return { type: "html", value } satisfies Html
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error)

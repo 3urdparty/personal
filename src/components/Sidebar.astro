@@ -17,7 +17,6 @@ const section = NAVIGATION.find(
   <sidebar-inner>
     <a href="/" aria-label={SITE.title}>
       <Logo />
-      <span>{SITE.title}</span>
     </a>
     <nav>
       <ul>
@@ -104,12 +103,6 @@ const section = NAVIGATION.find(
         inline-size: 1.125rem;
         block-size: 1.125rem;
         flex-shrink: 0;
-      }
-
-      @media (width < 26rem) {
-        span {
-          display: none;
-        }
       }
     }
 

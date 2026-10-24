@@ -1,11 +1,13 @@
 ---
 title: "v1.3.0: “Patches in Production”"
 description: "Whenever you depend on Node packages with missing maintainers, patching becomes a necessary evil."
-date: 2025-03-21
+publishDate: 2025-03-21
 order: 2
 tags:
   - v1.3.0
-image: "./assets/rehype-patch.png"
+coverImage:
+  alt: "Rehype patch preview"
+  src: "./assets/rehype-patch.png"
 authors:
   - enscribe
 ---

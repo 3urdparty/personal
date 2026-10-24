@@ -1,55 +1,42 @@
 ---
 import ExternalIcon from "@/assets/icons/external.svg"
-import { formatDate } from "@/lib/utils"
+import { getProjectHref } from "@/data/project"
 import { Image } from "astro:assets"
 import type { CollectionEntry } from "astro:content"
 
-type Props = { project: CollectionEntry<"projects"> }
+type Props = { project: CollectionEntry<"project"> }
 
 const { project } = Astro.props
-const { name, description, link, tags, image, startDate, endDate } =
-  project.data
+const { title, description, links, stack, image, status } = project.data
+const href = getProjectHref(project)
+const external = links.website ?? links.repository
 ---
 
 <li>
   {image && (
       <a
-        href={link}
-        target="_blank"
-        rel="noopener noreferrer"
+        href={href}
         tabindex="-1"
         aria-hidden="true"
       >
-        <Image src={image} alt="" width={640} height={336} />
+        <Image src={image.src} alt="" width={640} height={336} />
       </a>
     )}
   <entry-info>
-    <a href={link} target="_blank" rel="noopener noreferrer">{name}</a>
+    <a href={href}>{title}</a>
     <entry-meta>
-      {startDate && (
-          <project-dates>
-            <time datetime={startDate.toISOString()}>
-              {formatDate(startDate)}
-            </time>
-            {" → "}
-            {endDate ? (
-              <time datetime={endDate.toISOString()}>
-                {formatDate(endDate)}
-              </time>
-            ) : (
-              "Present"
-            )}
-          </project-dates>
-        )}
-      <project-link>
-        <ExternalIcon aria-hidden="true" />
-        {new URL(link).hostname}
-      </project-link>
+      {status && <span>{status}</span>}
+      {external && (
+        <project-link>
+          <ExternalIcon aria-hidden="true" />
+          {new URL(external).hostname}
+        </project-link>
+      )}
     </entry-meta>
     <p>{description}</p>
-    {tags && tags.length > 0 && (
+    {stack.length > 0 && (
         <project-tags>
-          {tags.map((tag) => (
+          {stack.map((tag) => (
             <span>{tag}</span>
           ))}
         </project-tags>
@@ -92,12 +79,6 @@ const { name, description, link, tags, image, startDate, endDate } =
         font-size: var(--step--1);
         color: var(--muted-foreground);
 
-        project-dates {
-          display: flex;
-          align-items: center;
-          gap: var(--space-3xs);
-        }
-
         project-link {
           display: flex;
           align-items: center;
@@ -110,7 +91,7 @@ const { name, description, link, tags, image, startDate, endDate } =
           }
         }
 
-        project-dates ~ project-link::before {
+        span ~ project-link::before {
           content: "·";
           color: var(--muted-foreground);
         }

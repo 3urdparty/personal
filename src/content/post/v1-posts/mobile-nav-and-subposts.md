@@ -1,11 +1,13 @@
 ---
 title: 'v1.6.0: "Mobile Navigation & Subposts"'
 description: 'This new version introduces improved mobile navigation (via sticky table of contents) and the concept of "subposts."'
-date: 2025-05-21
+publishDate: 2025-05-21
 order: 4
 tags:
   - v1.6.0
-image: "./assets/mobile-nav-and-subposts.png"
+coverImage:
+  alt: "Mobile navigation and subposts preview"
+  src: "./assets/mobile-nav-and-subposts.png"
 authors:
   - enscribe
 ---
